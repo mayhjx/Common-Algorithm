@@ -3,27 +3,23 @@ using System.Diagnostics;
 
 namespace MergeSort
 {
-    class MergeSort
+    class Program
     {
         static void Main(string[] args)
         {
-            // 归并排序
-            var arr = new int[] { 9, 8, 7, 6, 5, 4, 3, 2, 1, 0 };
-            var aux = new int[arr.Length];
-
+            //int[] arr = { 4, 7, 6, 2 };
+            int[] arr = { 4, 7, 6, 2, 3, 9, 1, 8, 0, 5 };
+            int[] aux = new int[arr.Length];
             Sort(arr, aux, 0, arr.Length - 1);
-
-            foreach (var i in arr)
+            for (int i = 0; i < arr.Length; i++)
             {
-                Console.WriteLine(i);
+                Console.Write(arr[i] + " ");
             }
         }
 
         static void Sort(int[] arr, int[] aux, int lo, int hi)
         {
-            if (hi <= lo)
-                return;
-
+            if (hi <= lo) return;
             int mid = lo + (hi - lo) / 2;
             Sort(arr, aux, lo, mid);
             Sort(arr, aux, mid + 1, hi);
@@ -32,9 +28,15 @@ namespace MergeSort
 
         static void Merge(int[] arr, int[] aux, int lo, int mid, int hi)
         {
-            Debug.Assert(IsSorted(arr, lo, mid));
-            Debug.Assert(IsSorted(arr, mid + 1, hi));
+            // 原数组包含两段排好序的子数组
+            // 先把原数组copy到另一个数组
+            // 然后分别遍历两端已排序的子数组，把其中较小的元素放回原数组中
+            // 当两个元素一样大时，把第一个子数组的元素放回原数组中
 
+            //Debug.Assert(IsSorted(arr, lo, mid));
+            //Debug.Assert(IsSorted(arr, mid + 1, hi));
+
+            // 将数组复制到辅助数组
             for (int k = lo; k <= hi; k++)
             {
                 aux[k] = arr[k];
@@ -47,25 +49,29 @@ namespace MergeSort
                     arr[k] = aux[j++];
                 else if (j > hi)
                     arr[k] = aux[i++];
-                else if (aux[i] < aux[j])
-                    arr[k] = aux[i++];
-                else
+                else if (Less(aux[j], aux[i]))
                     arr[k] = aux[j++];
+                else
+                    arr[k] = aux[i++];
             }
 
-            Debug.Assert(IsSorted(arr, lo, hi));
+            //Debug.Assert(IsSorted(arr, lo, hi));
         }
 
         static bool IsSorted(int[] arr, int lo, int hi)
         {
-            for (int i = lo; i <= hi - 1; i++)
+            for (int i = lo + 1; i <= hi; i++)
             {
-                if (arr[i] > arr[i + 1])
+                if (Less(arr[i], arr[i - 1]))
                 {
                     return false;
                 }
             }
             return true;
+        }
+        static bool Less(int i, int j)
+        {
+            return i.CompareTo(j) < 0;
         }
     }
 }
